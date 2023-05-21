@@ -67,26 +67,33 @@
 
             mediaRecorder.onstop = e => {
                 const audioBlob = new Blob(chunks, {type: 'audio/wav'})
-                chunks = [];
+            
                 var audioURL = window.URL.createObjectURL(audioBlob);
                 player.src = audioURL;
                 
+                const link = document.createElement('a');
+                link.href = audioURL;
+                link.download = 'audio.wav';
+                link.click();
+                
                 const formData = new FormData()
-                formData.append('userfile', audioBlob, 'recording.wav')
-                    $.ajax({
-                        type : 'POST',
-                        url : '/imgUpload',
-                        cache : false,  //不需要缓存
-                        processData : false,    //不需要进行数据转换
-                        contentType : false, //默认数据传输方式是application,改为false，编程multipart
-                        data : formData,
-                        dataType : 'json'
-                    }).done(function(data){
-                        console.log(data);
-                        alert(data.errMsg);
-                    }).fail(function(err){
-                        console.error(err);
-                    });
+                formData.append('audio', audioBlob, 'recording.wav');
+                chunks = [];
+
+                $.ajax({
+                    type : 'POST',
+                    url : '/imgUpload',
+                    cache : false,  //不需要缓存
+                    processData : false,    //不需要进行数据转换
+                    contentType : false, //默认数据传输方式是application,改为false，编程multipart
+                    data : formData,
+                    dataType : 'json'
+                }).done(function(data){
+                    console.log(data);
+                    alert(data.errMsg);
+                }).fail(function(err){
+                    console.error(err);
+                });
             };
             },
             () => {

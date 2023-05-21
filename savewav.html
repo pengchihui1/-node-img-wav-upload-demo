@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Save Audio as WAV</title>
+  </head>
+  <body>
+    <h1>Save Audio as WAV</h1>
+
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <button onclick="saveRecording()">Save Recording</button>
+
+    <script>
+      let mediaRecorder;
+      let chunks = [];
+
+      function startRecording() {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(function (stream) {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.addEventListener('dataavailable', function (event) {
+              chunks.push(event.data);
+            });
+            mediaRecorder.start();
+          });
+      }
+
+      function stopRecording() {
+        mediaRecorder.stop();
+      }
+
+      function saveRecording() {
+        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'recording.wav';
+        downloadLink.click();
+      }
+    </script>
+  </body>
+</html>
